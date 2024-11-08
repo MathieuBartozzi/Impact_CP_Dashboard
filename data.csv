@@ -1,17 +1,62 @@
-Date,Nom,Public ,Format,Type,Établissement cible,Autre établissement ? ,Durée (en heure),Nombre d'enseignants impactés,Efficacité perçue (1 : très faible ; 5 très haute),Thèmes travaillés,,
-12/10/2024,Anne REVERT,degré 1,distanciel,formation,Laayoune,,5,3,1,,,
-13/10/2024,Clélia PARRA,degré 2,presentiel,action réseau,Dakhla,,"0,25",40,2,,,
-14/10/2024,Clélia PARRA,degré 2,distanciel,visite de classe,Louis-Massignon,,4,31,3,,,
-15/10/2024,Karine LEFEBVRE,autre personnel,presentiel,accompagnement individuel,Laayoune,,3,20,4,,,Abdelhakim ALAOUI
-16/10/2024,Jean-Baptiste DEVYNCK,degré 1,presentiel,visite de classe,Dakhla,,6,4,4,,,Alban GOULLEY
-17/10/2024,Arnaud LEONARD,degré 2,distanciel,formation,Louis-Massignon,,7,5,4,,,Anne REVERT
-18/10/2024,Arnaud LEONARD,degré 2,presentiel,formation,Laayoune,,6,8,3,,,Arnaud LEONARD
-19/10/2024,Anne REVERT,autre personnel,presentiel,action réseau,Dakhla,,1,9,1,,,Clélia PARRA
-20/10/2024,Arnaud LEONARD,degré 1,distanciel,visite de classe,Louis-Massignon,,"0,5",10,2,,,Franck ASTIER
-21/10/2024,Alban GOULLEY,degré 2,presentiel,accompagnement individuel,Laayoune,,2,2,1,,,Jean-Baptiste DEVYNCK
-22/10/2024,Arnaud LEONARD,degré 2,presentiel,visite de classe,Dakhla,,5,7,4,,,Karine LEFEBVRE
-23/10/2024,Arnaud LEONARD,autre personnel,distanciel,formation,Louis-Massignon,,5,4,5,,,Laetitia BOUSQUET
-24/10/2024,Clélia PARRA,degré 1,presentiel,formation,Laayoune,,5,3,3,,,Magalie ZANATTA
-,,,,,,,,,,,,Mansour NASRI
-,,,,,,,,,,,,Mathieu BARTOZZI
-,,,,,,,,,,,,Mathilde SOULLIER
+Date,Nom,Public ,Format,Type,Établissement cible,Durée (en heure),Nombre d'enseignants impactés,Efficacité perçue (1 : très faible ; 5 très haute),Thèmes travaillés,,
+29/08/2024,"Abdelhakim ALAOUI, Alban GOULLEY, Anne REVERT, Arnaud LEONARD, Clélia PARRA, Franck ASTIER, Karine LEFEBVRE, Jean-Baptiste DEVYNCK, Laetitia BOUSQUET, Magalie ZANATTA, Mathieu BARTOZZI, Mansour NASRI, Mathilde SOULLIER",degré 1 et 2,presentiel,formation,"Dakhla, Daudet, El Jadida, Louis-Massignon, Malraux, Marrakech",12,20,5,"Travailler dans le réseau OSUI, la gestion de classe et la sénarisation",,
+03/10/2024,"Clélia PARRA, Anne REVERT",degré 1 et 2,presentiel,formation,Laayoune,1,20,3,Les écrits de travail,,
+03/10/2024,Laetitia BOUSQUET,degré 1 et 2,presentiel,formation,Laayoune,1,,,,,
+03/10/2024,Laetitia BOUSQUET,degré 2,presentiel,visite de classe,Laayoune,2,,,,,Abdelhakim ALAOUI
+04/10/2024,Laetitia BOUSQUET,degré 1 et 2,presentiel,visite de classe,Laayoune,2,,,,,Alban GOULLEY
+04/10/2024,Laetitia BOUSQUET,degré 1 et 2,presentiel,suivi de projet,Laayoune,2,,,,,Anne REVERT
+03/10/2024,Anne REVERT,degré 2,presentiel,visite de classe,Laayoune,4,2,5,scénarisation,,Arnaud LEONARD
+04/10/2024,"Anne REVERT, Clélia PARRA",degré 1 et 2,presentiel,suivi de projet,Laayoune,2,15,5,projet écriture haïkus,,Clélia PARRA
+25/09/2024,Magalie ZANATTA,degré 1,presentiel,formation,Louis-Massignon,2,20,4,Classes Internationales,,Franck ASTIER
+02/10/2024,Magalie ZANATTA,degré 1,presentiel,formation,Louis-Massignon,2,23,5,Construction du nombre au cycle 1,,Jean-Baptiste DEVYNCK
+11/09/2024,"Magalie ZANATTA, Mathilde SOULLIER",degré 1,distanciel,formation,Marrakech,1,2,5,Prise de poste N1,,Karine LEFEBVRE
+02/10/2024,Mathilde SOULLIER,degré 1,distanciel,formation,Dakhla,1,1,5,Prise de poste N1,,Laetitia BOUSQUET
+07/10/2024,Magalie ZANATTA,degré 1,presentiel,visite de classe,Marrakech,2,1,5,La gestion de classe ,,Magalie ZANATTA
+07/10/2024,Magalie ZANATTA,degré 1,presentiel,visite de classe,Marrakech,2,1,5,Les objectifs d'apprentissage,,Mansour NASRI
+08/10/2024,Magalie ZANATTA,degré 1,presentiel,visite de classe,Marrakech,3,1,5,La gestion de classe ,,Mathieu BARTOZZI
+02/10/2024,Magalie ZANATTA,degré 1,presentiel,visite de classe,Louis-Massignon,2,1,5,Les objectifs d'apprentissage ,,Mathilde SOULLIER
+18/09/2024,"Magalie ZANATTA, Mathilde SOULLIER",degré 1,distanciel,formation,"Dakhla, Louis-Massignon, Marrakech",2,6,5,Les outils du PE,,
+05/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,1,5,Observation pratiques,,
+06/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,1,5,Repérage des espaces ,,
+12/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,1,5,Rédaction calendrier prévisionnel,,
+19/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,1,,Démocratie scolaire,,
+20/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,1,5,Répartition des missions,,
+27/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,2,5,Accueil nouvelle CPE,,
+28/09/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Daudet,6,2,5,Protocoles gestion des absences et retards,,
+04/10/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,El Jadida,6,1,5,positionnement CPE et organisation,,
+01/10/2024,Mathilde SOULLIER,degré 1,presentiel,accompagnement individuel,Daudet,1,2,3,"Gestion double niveau 
+Outils français cycle 2",,
+02/10/2024,Mathilde SOULLIER,degré 1,distanciel,accompagnement individuel,Dakhla,"0,5",1,4,Préparation visite de classe,,
+03/10/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,Louis-Massignon,3,1,4,Boîte à outils,,
+10/10/2024,Karine LEFEBVRE,degré 2,presentiel,accompagnement individuel,,3,1,4,Protocole punitions et sanctions,,
+11/10/2024,Karine LEFEBVRE,degré 2,distanciel,accompagnement individuel,El Jadida,"0,5",1,3,Suivi visite,,
+29/08/2024,"Mathilde SOULLIER, Magalie ZANATTA",degré 1,presentiel,accompagnement collectif,"Dakhla, Louis-Massignon, Marrakech",12,10,5,Préparer la rentrée,,
+07/10/2024,Mathilde SOULLIER,degré 1,presentiel,visite de classe,Dakhla,8,4,,Visites de classe,,
+08/10/2024,Mathilde SOULLIER,degré 1,presentiel,accompagnement individuel,Dakhla,5,5,,La préparation /gestion de classe / référentiel compétences,,
+09/10/2024,Magalie ZANATTA,degré 1,presentiel,accompagnement individuel,Marrakech,1,1,5,Le rôle de l'enseignant référent Ebep,,
+16/10/2024,"Magalie ZANATTA, Mathilde SOULLIER",degré 1,distanciel,formation,"Dakhla, Louis-Massignon, Marrakech",2,8,4,L'évaluation,,
+17/10/2024,Magalie ZANATTA,degré 1,presentiel,visite de classe,Louis-Massignon,2,1,,Gestion de classe + Evaluation,,
+14/10/2024,Mathilde SOULLIER,degré 1,presentiel,visite de classe,El Jadida,4,2,,,,
+15/10/2024,Laetitia BOUSQUET,degré 2,presentiel,accompagnement collectif,"Louis-Massignon, Agadir",1,,,,,
+16/10/2024,Mathilde SOULLIER,degré 1,presentiel,accompagnement individuel,Daudet,20,1,,accompagnement prise de poste direction,,
+16/10/2024,Magalie ZANATTA,degré 1,distanciel,accompagnement individuel,Marrakech,1,1,4,L'anglais à Benguerir + La mise en placet et le suivi des ateliers + les élèves perturbateurs. ,,
+17/10/2024,Mathilde SOULLIER,degré 1,presentiel,accompagnement individuel,Louis-Massignon,"0,5",1,5,,,
+17/10/2024,Anne REVERT,degré 2,presentiel,formation,Malraux,3,10,5,Lecture autonome et critique,,
+10/10/2024,Anne REVERT,degré 2,distanciel,action réseau,"Agadir, Dakhla, Daudet, El Jadida, Laayoune, Louis-Massignon, Malraux, Marrakech, Tanger",1,30,5,Nuits de la lecture/ 1,,
+11/10/2024,Anne REVERT,degré 2,distanciel,action réseau,"Malraux, Louis-Massignon, Laayoune, El Jadida, Agadir",1,7,5,comité Littérture et francophonie,,
+11/10/2024,Anne REVERT,degré 2,distanciel,action réseau,"Laayoune, Louis-Massignon",5,2,5,rédaction d'articles pédagogiques par les collègues ,,
+30/08/2024,Anne REVERT,degré 2,presentiel,formation,"Louis-Massignon, Daudet",6,2,5,Formation disciplinaire N1,,
+03/10/2024,Clélia PARRA,degré 2,presentiel,visite de classe,Laayoune,2,1,2,Scénarisation et contenus,,
+21/10/0204,Franck ASTIER,degré 2,distanciel,accompagnement individuel,Daudet,2,1,4,Organisation et protocole d'accompagnement,,
+26/09/2024,Franck ASTIER,degré 2,presentiel,suivi de projet,Daudet,2,2,3,Audit LFIAD SVT,,
+19/09/2024,Franck ASTIER,degré 2,distanciel,accompagnement collectif,Malraux,"0,5",6,5,Préparation formation et évaluation des besoins,,
+04/10/2024,Franck ASTIER,degré 2,distanciel,accompagnement collectif,Tanger,1,2,3,Inscriptions olympiades et étude de besoins,,
+20/10/2024,Franck ASTIER,degré 2,distanciel,action réseau,"Agadir, Dakhla, Daudet, El Jadida, Laayoune, Essaouira, Louis-Massignon, Malraux, Marrakech, Tanger","0,2",31,1,Newsletter N°1,,
+30/09/2024,Franck ASTIER,degré 2,presentiel,formation,Louis-Massignon,3,1,3,Formation N1 journée préparatoire,,
+27/09/2024,Franck ASTIER,degré 2,presentiel,formation,"Louis-Massignon, El Jadida, Daudet, Malraux","7,5",7,4,Formation N1 R1,,
+14/11/2024,Franck ASTIER,degré 2,presentiel,formation,"Daudet, El Jadida, Malraux",7,6,,Formation N1 R2,,
+10/10/2024,Jean-Baptiste DEVYNCK,degré 2,distanciel,action réseau,"Marrakech, Laayoune, Tanger, El Jadida, Dakhla, Agadir",3,6,4,visio de rentrée,,
+26/09/2024,Jean-Baptiste DEVYNCK,degré 2,presentiel,suivi de projet,Daudet,2,5,4,Audit LFIAD,,
+07/10/2024,Jean-Baptiste DEVYNCK,degré 2,presentiel,accompagnement individuel,Louis-Massignon,3,1,5,initiation Python,,
+08/10/2024,Jean-Baptiste DEVYNCK,degré 2,distanciel,action réseau,"Tanger, Marrakech, Malraux, Louis-Massignon, Essaouira, Laayoune, El Jadida, Daudet, Dakhla, Agadir","0,2",70,3,TastiR oct (newsletter),,
+07/11/2024,Jean-Baptiste DEVYNCK,degré 2,presentiel,formation,Malraux,"3,5",5,,Débuter en Python,,
