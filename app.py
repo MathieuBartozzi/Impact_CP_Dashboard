@@ -43,37 +43,20 @@ def cleaning_data(data):
     data['Nombre d\'enseignants impactés'].fillna(0, inplace=True)
     data['Efficacité'].fillna(0, inplace=True)
     data['Public'].fillna(0, inplace=True)
+    data['Public'].replace('degré 1 et 2', 'inter degré', inplace=True)
+
     return data
 
 
 # Chargement et nettoyage des données
 data = load_data()
 data_cleaned = cleaning_data(data)
+# Convertir la colonne 'Date' en date uniquement pour la comparaison
+data_cleaned['Date_only'] = data_cleaned['Date'].dt.date
 
 # Convertir les dates en date uniquement (sans heure) pour le slider
 date_min = data_cleaned['Date'].min().date()
 date_max = data_cleaned['Date'].max().date()
-
-# Titre principal
-st.sidebar.title("CP OSUI 2024 - 2025 : tableau de bord d'activité ")
-
-# Slider de sélection de dates dans la barre latérale
-selected_date_range = st.sidebar.slider(
-    "Sélectionnez une plage de dates",
-    min_value=date_min,
-    max_value=date_max,
-    value=(date_min, date_max),
-    step=timedelta(days=1)
-)
-
-# Convertir la colonne 'Date' en date uniquement pour la comparaison
-data_cleaned['Date_only'] = data_cleaned['Date'].dt.date
-
-# Filtrer les données en fonction de la plage de dates sélectionnée
-data_cleaned = data_cleaned[
-    (data_cleaned['Date_only'] >= selected_date_range[0]) &
-    (data_cleaned['Date_only'] <= selected_date_range[1])
-]
 
 #preparation data pour le chart avec les differents type de formations
 repartition_type = data_cleaned['Type'].value_counts().reset_index()
@@ -96,9 +79,39 @@ efficacite_moyenne_val = data_cleaned['Efficacité'].mean()
 #theme des graphiques
 color_grah_theme=px.colors.qualitative.T10
 
+# Dictionnaire pour correspondre chaque public à une couleur spécifique
+color_mapping_public= {
+    'degré 1': '#F58518',  # orange par exemple
+    'degré 2': '#4C78A8',  # bleu par exemple
+    'inter degré': '#E45756'  # rouge par exemple pour 'inter degré'
+}
+
+# Titre principal
+st.sidebar.title("CP OSUI 2024 - 2025 : tableau de bord d'activité ")
+
+st.write("Répartition Format:", repartition_format)
+st.write("Répartition Public:", repartition_public)
+st.write("Data_cleaned:", data_cleaned)
+
+
+# Slider de sélection de dates dans la barre latérale
+selected_date_range = st.sidebar.slider(
+    "Sélectionnez une plage de dates",
+    min_value=date_min,
+    max_value=date_max,
+    value=(date_min, date_max),
+    step=timedelta(days=1)
+)
+
+
+# Filtrer les données en fonction de la plage de dates sélectionnée
+data_cleaned = data_cleaned[
+    (data_cleaned['Date_only'] >= selected_date_range[0]) &
+    (data_cleaned['Date_only'] <= selected_date_range[1])
+]
+
 # Debut de la page
 # st.subheader("Indicateurs généraux")
-
 
 #ligne 1 : indicateurs
 col1, col2, col3, col4 = st.columns(4)
@@ -155,7 +168,11 @@ with col2 :
                 names='Public',
                 values='Nombre',
                 hole=.4,
-                color_discrete_sequence=color_grah_theme
+                color_discrete_map={
+                'degré 1': '#F58518',  # orange
+                'degré 2': '#4C78A8',  # bleu
+                'inter degré': '#E45756'  # rouge
+    }
             )
 
             # Positionner le titre et supprimer la légende pour ce graphique
@@ -180,9 +197,13 @@ with col2 :
                 y='Type',
                 color='Public',
                 title=None,
-                color_discrete_sequence=color_grah_theme
+                color_discrete_map={
+                'degré 1': '#F58518',  # orange
+                'degré 2': '#4C78A8',  # bleu
+                'inter degré': '#E45756'  # rouge
+    }
             )
-            fig_stacked_bar_degre.update_layout(barmode='stack',showlegend=False)
+            fig_stacked_bar_degre.update_layout(barmode='stack',showlegend=True)
             fig_stacked_bar_degre.update_xaxes(title=None)  # Supprimer le label de l'axe X
             fig_stacked_bar_degre.update_yaxes(title=None)  # Supprimer le label de l'axe Y
 
