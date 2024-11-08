@@ -1,0 +1,7 @@
+[theme]
+base = "dark"
+primaryColor = "#4C78A8"
+backgroundColor = "#f7f6f5"
+secondaryBackgroundColor = "#ffffff"  # Couleur de fond pour la barre latérale
+textColor = "#000000"  # Couleur du texte par défaut
+font = "sans serif"
