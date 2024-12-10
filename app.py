@@ -11,262 +11,803 @@ st.set_page_config(
 
 st.logo('logo.png')
 
-# # Charger les données depuis Google Sheets
-# sheet_id = "10eH5dsJ2-t_ppLPgr9TIrijOR_1DdOYEPhSSiP6BhrI"
-# sheet_name = "Feuille1"
-# url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
 
+def load_sheet(file_id, gid):
+    url = f"https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv&gid={gid}"
+    df = pd.read_csv(url)
+    return df
 
-# # # Lire les données
-# data = pd.read_csv(url)
-
-# Utilisez @st.cache_data pour le chargement des données
-@st.cache_data
-def load_data():
-    sheet_id = "10eH5dsJ2-t_ppLPgr9TIrijOR_1DdOYEPhSSiP6BhrI"
-    sheet_name = "Feuille1"
-    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-    data = pd.read_csv(url)
-    return data
-
-
-
-# Nettoyer les données
-@st.cache_data
-def cleaning_data(data):
-    colonnes_a_supprimer = ['Thèmes travaillés', 'Unnamed: 11', 'Unnamed: 12']
-    data = data.drop(columns=colonnes_a_supprimer, errors='ignore')
-    data['Durée (en heure)'] = pd.to_numeric(data['Durée (en heure)'], errors='coerce')
-    data['Nombre d\'enseignants impactés'] = pd.to_numeric(data['Nombre d\'enseignants impactés'], errors='coerce')
-    data['Efficacité perçue (1 : très faible ; 5 très haute)'] = pd.to_numeric(data['Efficacité perçue (1 : très faible ; 5 très haute)'], errors='coerce')
-    data.rename(columns={'Efficacité perçue (1 : très faible ; 5 très haute)': 'Efficacité'}, inplace=True)
-    data['Date'] = pd.to_datetime(data['Date'], format='%d/%m/%Y',errors='coerce')
-    data['Durée (en heure)'].fillna(0, inplace=True)
-    data['Nombre d\'enseignants impactés'].fillna(0, inplace=True)
-    data['Efficacité'].fillna(0, inplace=True)
-    data['Public'].fillna(0, inplace=True)
-    data['Public'].replace('degré 1 et 2', 'inter degré', inplace=True)
-
-    return data
-
-
-# Chargement et nettoyage des données
-data = load_data()
-data_cleaned = cleaning_data(data)
-# Convertir la colonne 'Date' en date uniquement pour la comparaison
-data_cleaned['Date_only'] = data_cleaned['Date'].dt.date
-
-# Convertir les dates en date uniquement (sans heure) pour le slider
-date_min = data_cleaned['Date'].min().date()
-date_max = data_cleaned['Date'].max().date()
-
-#preparation data pour le chart avec les differents type de formations
-repartition_type = data_cleaned['Type'].value_counts().reset_index()
-repartition_type.columns = ['Type de Formation', 'Nombre']
-
-#preparation data pour le chart avec les differents format de formations : presentiel/ligne
-repartition_format = data_cleaned['Format'].value_counts().reset_index()
-repartition_format.columns = ['Format', 'Nombre']
-
-#preparation data pour le chart avec les differents public de formations : degré1/degré2
-repartition_public = data_cleaned['Public'].value_counts().reset_index()
-repartition_public.columns = ['Public', 'Nombre']
-
-
-
-#theme des graphiques
-color_grah_theme=px.colors.qualitative.T10
-
-# Dictionnaire pour correspondre chaque public à une couleur spécifique
-color_mapping_public= {
-    'degré 1': '#F58518',  # orange par exemple
-    'degré 2': '#4C78A8',  # bleu par exemple
-    'inter degré': '#E45756'  # rouge par exemple pour 'inter degré'
+# Charger chaque onglet dans un DataFrame
+file_id_avis_de_mission = "1iEPI3UaPmMzDF1SpHAmR6ghlScBH1gC3FFWdn8MLH8U"
+file_id_impact_cp="10eH5dsJ2-t_ppLPgr9TIrijOR_1DdOYEPhSSiP6BhrI"
+gid = {
+    "avis_de_mission": "90394237",
+    "impact_cp": "0"
 }
 
 # Titre principal
 st.title("CP OSUI 2024 - 2025 : tableau de bord d'activité ")
 
-#calcul des metriques principales
-total_interventions = len(data_cleaned)
-total_enseignants = int(data_cleaned['Nombre d\'enseignants impactés'].sum())
-duree_totale = data_cleaned['Durée (en heure)'].sum()
-efficacite_moyenne_val = data_cleaned['Efficacité'].mean()
+tab1, tab2= st.tabs(["**ACTIVITÉ DE L'ÉQUIPE**", "**AVIS DE MISSION**"])
 
-# Debut de la page
+############################## ACTIVITÉ DE L'ÉQUIPE  ##############################
+with tab1 :
+    # Nettoyer les données
+    @st.cache_data
+    def cleaning_data_impact_cp(data):
+        colonnes_a_supprimer = ['Thèmes travaillés', 'Unnamed: 11', 'Unnamed: 12']
+        data = data.drop(columns=colonnes_a_supprimer, errors='ignore')
+        data['Durée (en heure)'] = pd.to_numeric(data['Durée (en heure)'], errors='coerce')
+        data['Nombre d\'enseignants impactés'] = pd.to_numeric(data['Nombre d\'enseignants impactés'], errors='coerce')
+        data['Efficacité perçue (1 : très faible ; 5 très haute)'] = pd.to_numeric(data['Efficacité perçue (1 : très faible ; 5 très haute)'], errors='coerce')
+        data.rename(columns={'Efficacité perçue (1 : très faible ; 5 très haute)': 'Efficacité'}, inplace=True)
+        data['Date'] = pd.to_datetime(data['Date'], format='%d/%m/%Y',errors='coerce')
+        data['Durée (en heure)'].fillna(0, inplace=True)
+        data['Nombre d\'enseignants impactés'].fillna(0, inplace=True)
+        data['Efficacité'].fillna(0, inplace=True)
+        data['Public'].fillna(0, inplace=True)
+        data['Public'].replace('degré 1 et 2', 'inter degré', inplace=True)
 
-#ligne 1 : indicateurs
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    with st.container(border=True):
-        st.metric(label="Nombre d'interventions", value=total_interventions)
-with col2:
-    with st.container(border=True):
-        st.metric(label="Nombre d'enseignants impactés", value=total_enseignants)
-with col3:
-    with st.container(border=True):
-        st.metric(label="Durée (en heure)", value=f"{duree_totale:.1f}")
-with col4:
-    with st.container(border=True):
-        st.metric(label="Efficacité moyenne perçue (sur 5)", value=f"{efficacite_moyenne_val:.2f}")
-
-
-#ligne 1 : pie chart formart + pie char format + repartation par public vs types.
-col1, col2=st.columns([1, 3])
-with col1:
-    with st.container(border=True):
-        # Graphique en anneau pour la répartition des formats (sans légende pour éviter la répétition)
-        fig_pie_format = px.pie(
-            repartition_format,
-            names='Format',
-            values='Nombre',
-            hole=.4,
-            color_discrete_sequence=color_grah_theme
-        )
-
-        # Positionner le titre et supprimer la légende pour ce graphique
-        fig_pie_format.update_layout(
-            width=350, height=350,
-            legend=dict(
-            orientation="h",  # Orientation horizontale
-            yanchor="bottom",
-            # # Positionner la légende au-dessus du graphique
-            xanchor="center",
-            x=0.5  # Centrer la légende
-        ),
-            margin=dict(t=0, b=0)
-        )
+        return data
 
 
-        # Afficher le graphique
-        st.plotly_chart(fig_pie_format)
+    # Chargement et nettoyage des données
+    data = load_sheet(file_id_impact_cp,gid['impact_cp'])
+    data_cleaned_imcpact_cp = cleaning_data_impact_cp(data)
+
+    # Convertir la colonne 'Date' en date uniquement pour la comparaison
+    data_cleaned_imcpact_cp['Date_only'] = data_cleaned_imcpact_cp['Date'].dt.date
+
+    #preparation data pour le chart avec les differents type de formations
+    repartition_type = data_cleaned_imcpact_cp['Type'].value_counts().reset_index()
+    repartition_type.columns = ['Type de Formation', 'Nombre']
+
+    #preparation data pour le chart avec les differents format de formations : presentiel/ligne
+    repartition_format = data_cleaned_imcpact_cp['Format'].value_counts().reset_index()
+    repartition_format.columns = ['Format', 'Nombre']
+
+    #preparation data pour le chart avec les differents public de formations : degré1/degré2
+    repartition_public = data_cleaned_imcpact_cp['Public'].value_counts().reset_index()
+    repartition_public.columns = ['Public', 'Nombre']
 
 
-with col2 :
 
-    with st.container(border=True):
-        col1, col2 = st.columns([1, 2])
+    #theme des graphiques
+    color_grah_theme=px.colors.qualitative.T10
 
-        with col1:
+    # Dictionnaire pour correspondre chaque public à une couleur spécifique
+    color_mapping_public= {
+        'degré 1': '#F58518',  # orange par exemple
+        'degré 2': '#4C78A8',  # bleu par exemple
+        'inter degré': '#E45756'  # rouge par exemple pour 'inter degré'
+    }
+
+    # # Titre principal
+    # st.title("CP OSUI 2024 - 2025 : tableau de bord d'activité ")
+
+    #calcul des metriques principales
+    total_interventions = len(data_cleaned_imcpact_cp)
+    total_enseignants = int(data_cleaned_imcpact_cp['Nombre d\'enseignants impactés'].sum())
+    duree_totale = data_cleaned_imcpact_cp['Durée (en heure)'].sum()
+    efficacite_moyenne_val = data_cleaned_imcpact_cp['Efficacité'].mean()
+
+    # Debut de la page
+
+    #ligne 1 : indicateurs
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        with st.container(border=True):
+            st.metric(label="Nombre d'interventions", value=total_interventions)
+    with col2:
+        with st.container(border=True):
+            st.metric(label="Nombre d'enseignants impactés", value=total_enseignants)
+    with col3:
+        with st.container(border=True):
+            st.metric(label="Durée (en heure)", value=f"{duree_totale:.1f}")
+    with col4:
+        with st.container(border=True):
+            st.metric(label="Efficacité moyenne perçue (sur 5)", value=f"{efficacite_moyenne_val:.2f}")
+
+
+    #ligne 1 : pie chart formart + pie char format + repartation par public vs types.
+    col1, col2=st.columns([1, 3])
+    with col1:
+        with st.container(border=True):
             # Graphique en anneau pour la répartition des formats (sans légende pour éviter la répétition)
-            fig_pie_public = px.pie(
-                repartition_public,
-                names='Public',
+            fig_pie_format = px.pie(
+                repartition_format,
+                names='Format',
                 values='Nombre',
                 hole=.4,
-                color='Public',
-                color_discrete_map={
-                'degré 1': '#F58518',  # orange
-                'degré 2': '#4C78A8',  # bleu
-                'inter degré': '#E45756'  # rouge
-    }
+                color_discrete_sequence=color_grah_theme
             )
 
             # Positionner le titre et supprimer la légende pour ce graphique
-            fig_pie_public.update_layout(
-                width=350, height=350,
-                title_text="",
+            fig_pie_format.update_layout(
+                width=300, height=200,
                 legend=dict(
                 orientation="h",  # Orientation horizontale
-                yanchor="top",
-                y=0,  # Positionner la légende au-dessus du graphique
+                yanchor="bottom",
+                # # Positionner la légende au-dessus du graphique
                 xanchor="center",
-                x=0.5  # Centrer la légende
+                x=0.5,
+                y=-0.5# Centrer la légende
             ),
                 margin=dict(t=0, b=0)
             )
+
+
             # Afficher le graphique
-            st.plotly_chart(fig_pie_public)
+            st.plotly_chart(fig_pie_format)
+
+
+    with col2 :
+
+        with st.container(border=True):
+            col1, col2 = st.columns([1, 2])
+
+            with col1:
+                # Graphique en anneau pour la répartition des formats (sans légende pour éviter la répétition)
+                fig_pie_public = px.pie(
+                    repartition_public,
+                    names='Public',
+                    values='Nombre',
+                    hole=.4,
+                    color='Public',
+                    color_discrete_map={
+                    'degré 1': '#F58518',  # orange
+                    'degré 2': '#4C78A8',  # bleu
+                    'inter degré': '#E45756'  # rouge
+        }
+                )
+
+                # Positionner le titre et supprimer la légende pour ce graphique
+                fig_pie_public.update_layout(
+                    width=300, height=200,
+                    title_text="",
+                    legend=dict(
+                    orientation="h",  # Orientation horizontale
+                    yanchor="bottom",
+                    y=-0.5,  # Positionner la légende au-dessus du graphique
+                    xanchor="center",
+                    x=0.5
+                    # Centrer la légende
+                ),
+                    margin=dict(t=0, b=0)
+                )
+                # Afficher le graphique
+                st.plotly_chart(fig_pie_public)
+
+            with col2:
+                fig_stacked_bar_degre = px.bar(
+                    data_cleaned_imcpact_cp,
+                    x="Nombre d'enseignants impactés",
+                    y='Type',
+                    color='Public',
+                    title=None,
+                    color_discrete_map={
+                    'degré 1': '#F58518',  # orange
+                    'degré 2': '#4C78A8',  # bleu
+                    'inter degré': '#E45756'  # rouge
+        }
+                )
+                fig_stacked_bar_degre.update_layout(
+                    barmode='stack',
+                    showlegend=False,
+                    width=500, height=200,
+                    margin=dict(l=10, r=10, t=20, b=20) )
+                fig_stacked_bar_degre.update_xaxes(title=None)  # Supprimer le label de l'axe X
+                fig_stacked_bar_degre.update_yaxes(title=None)  # Supprimer le label de l'axe Y
+
+                st.plotly_chart(fig_stacked_bar_degre)
+
+
+    # Section 2 :
+    with st.container(border=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            #préparations des données
+            data_expanded = data_cleaned_imcpact_cp.assign(
+            Établissement_cible=data_cleaned_imcpact_cp['Établissement cible'].str.split(',')
+            ).explode('Établissement_cible')
+            data_expanded['Établissement_cible'] = data_expanded['Établissement_cible'].str.strip()
+
+            # Calcul du nombre total d'enseignants impactés par établissement et tri par ordre décroissant
+            impact_etablissement = (
+                data_expanded.groupby('Établissement_cible')['Nombre d\'enseignants impactés']
+                .sum()
+                .reset_index()
+                .sort_values(by='Nombre d\'enseignants impactés', ascending=False)
+            )
+            #visuel
+            fig_chart_1 = px.bar(
+                impact_etablissement,
+                x='Établissement_cible',
+                y='Nombre d\'enseignants impactés',
+                title="Nombre d'enseignants impactés par établissement",
+                color_discrete_sequence=color_grah_theme)
+            # Suppression des titres des axes
+            fig_chart_1.update_layout(height=220,  # Même hauteur que les pie charts
+            margin=dict(t=20, b=20))  # Ajuste les marges pour plus d'équilibre)
+
+            fig_chart_1.update_xaxes(title=None)
+            fig_chart_1.update_yaxes(title=None)
+            st.plotly_chart(fig_chart_1)
 
         with col2:
-            fig_stacked_bar_degre = px.bar(
-                data_cleaned,
-                x="Nombre d'enseignants impactés",
-                y='Type',
-                color='Public',
-                title=None,
-                color_discrete_map={
-                'degré 1': '#F58518',  # orange
-                'degré 2': '#4C78A8',  # bleu
-                'inter degré': '#E45756'  # rouge
-    }
+            tendance = data_cleaned_imcpact_cp.groupby(pd.Grouper(key='Date')).agg({
+                'Durée (en heure)': 'sum',
+                'Nombre d\'enseignants impactés': 'sum'
+            }).reset_index()
+
+            # Trier par date
+            tendance = tendance.sort_values(by='Date')
+
+            # Calcul de la moyenne mobile sur la colonne 'Durée (en heure)' sur une fenêtre de 7 jours
+            tendance['Moyenne_mobile'] = tendance['Durée (en heure)'].rolling(window=6).mean()
+
+            # Visualisation
+            fig_chart_2 = px.bar(
+                tendance,
+                x='Date',
+                y='Durée (en heure)',
+                title="Nombre d'heures d'intervention par jour",
+                color_discrete_sequence=color_grah_theme
             )
-            fig_stacked_bar_degre.update_layout(
-                barmode='stack',
+            fig_chart_2.update_layout(height=220,  # Même hauteur que les pie charts
+            margin=dict(t=20, b=20))
+
+            # Suppression des titres des axes
+            fig_chart_2.update_xaxes(title=None, tickformat='%d/%m/%Y')
+            fig_chart_2.update_yaxes(title="Durée (en heure)")
+
+            # Ajout de la ligne de moyenne mobile
+            fig_chart_2.add_scatter(
+                x=tendance['Date'],
+                y=tendance['Moyenne_mobile'],
+                mode='lines',
+                name='Moyenne mobile (7 jours)',
                 showlegend=False,
-                width=800, height=350)
-            fig_stacked_bar_degre.update_xaxes(title=None)  # Supprimer le label de l'axe X
-            fig_stacked_bar_degre.update_yaxes(title=None)  # Supprimer le label de l'axe Y
+                fill='tozeroy',
+                line_shape='spline',
+                line=dict(color=color_grah_theme[1], width=2)
+            )
 
-            st.plotly_chart(fig_stacked_bar_degre)
+            # Affichage du graphique dans Streamlit
+            st.plotly_chart(fig_chart_2)
 
 
-# Section 2 :
-with st.container(border=True):
-    col1, col2 = st.columns(2)
+with tab2:
+    @st.cache_data
+    def nettoyer_data_avis_de_mission(file_id, gid, verbose=False, colonnes_a_supprimer=None, colonnes_essentielles=None, nettoyer_texte=True):
+        if colonnes_a_supprimer is None:
+            colonnes_a_supprimer = ['N° D\'intervention', 'N°']
+        if colonnes_essentielles is None:
+            colonnes_essentielles = ['Nom / Prénom', 'Date d\'intervention']
+
+        # Charger la feuille
+        try:
+            url = f"https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv&gid={gid}"
+            data_avis_de_mission = pd.read_csv(url)
+        except Exception as e:
+            print(f"Erreur lors du chargement des données : {e}")
+            return None
+
+        if verbose:
+            print(f"Données chargées : {data_avis_de_mission.shape}")
+
+        # Conversion des dates
+        data_avis_de_mission["Date d'intervention"] = pd.to_datetime(
+            data_avis_de_mission["Date d'intervention"], format='%d/%m/%Y', errors='coerce'
+        ).dt.date
+
+        # Supprimer les colonnes inutiles
+        data_avis_de_mission = data_avis_de_mission.drop(columns=colonnes_a_supprimer, errors='ignore')
+
+        # Supprimer les lignes où des colonnes essentielles ont des valeurs manquantes
+        data_avis_de_mission = data_avis_de_mission.dropna(subset=colonnes_essentielles)
+
+        # Conversion des colonnes numériques
+        for col in ['Nombre de jour', 'Année scolaire 2024/2025']:
+            if col in data_avis_de_mission.columns:
+                data_avis_de_mission[col] = data_avis_de_mission[col].fillna(0).astype(int)
+
+        # Renommer les colonnes
+        nouveaux_noms = {
+            'Nom / Prénom': 'Nom',
+            'Discipline': 'Discipline',
+            'Lieu d\'intervention': 'Lieu',
+            'Date d\'intervention': 'Date',
+            'Nombre de jour': 'nb_jours',
+            'Année scolaire 2024/2025': 'AnneeScolaire',
+            'Mission': 'Mission',
+            'Objet de la mission': 'Objet',
+            'Situation': 'Situation'
+        }
+        data_avis_de_mission = data_avis_de_mission.rename(columns=nouveaux_noms)
+
+        # Nettoyage des colonnes textuelles
+        if nettoyer_texte:
+            for col in data_avis_de_mission.select_dtypes(include=['object']).columns:
+                data_avis_de_mission[col] = (
+                    data_avis_de_mission[col]
+                    .astype(str)
+                    .str.strip()
+                    .replace('', pd.NA)
+                    .str.lower()
+                )
+
+        if verbose:
+            print(f"Données nettoyées : {data_avis_de_mission.shape}")
+
+        return data_avis_de_mission
+
+    df_avis_de_mission=nettoyer_data_avis_de_mission(file_id_avis_de_mission, gid['avis_de_mission'],verbose=False, colonnes_a_supprimer=None, colonnes_essentielles=None, nettoyer_texte=True)
+
+    col1,col2,col3=st.columns([1,2,1])
+
     with col1:
-        #préparations des données
-        data_expanded = data_cleaned.assign(
-        Établissement_cible=data_cleaned['Établissement cible'].str.split(',')
-        ).explode('Établissement_cible')
-        data_expanded['Établissement_cible'] = data_expanded['Établissement_cible'].str.strip()
 
-        # Calcul du nombre total d'enseignants impactés par établissement et tri par ordre décroissant
-        impact_etablissement = (
-            data_expanded.groupby('Établissement_cible')['Nombre d\'enseignants impactés']
-            .sum()
-            .reset_index()
-            .sort_values(by='Nombre d\'enseignants impactés', ascending=False)
-        )
-        #visuel
-        fig_chart_1 = px.bar(
-            impact_etablissement,
-            x='Établissement_cible',
-            y='Nombre d\'enseignants impactés',
-            title="Nombre d'enseignants impactés par établissement",
-            color_discrete_sequence=color_grah_theme)
-        # Suppression des titres des axes
+        st.subheader("Vue par établissement")
+        @st.cache_data
+        def repartition_par_objet_et_degre(df, etablissement):
+            """
+            Affiche un stacked bar chart des missions par objets et par degré pour un établissement donné.
 
-        fig_chart_1.update_xaxes(title=None)
-        fig_chart_1.update_yaxes(title=None)
-        st.plotly_chart(fig_chart_1)
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+                etablissement (str): Le nom de l'établissement.
+
+            Returns:
+                None: Affiche directement le graphique avec Plotly.
+            """
+            df_etab = df[df['Lieu'] == etablissement].copy()  # Création d'une copie explicite
+            df_etab['Degré'] = df_etab['Mission'].apply(lambda x: "Degré 1" if "cp1" in x.lower() else "Degré 2")
+
+            repartition = df_etab.groupby(['Objet', 'Degré'])['Nom'].count().reset_index()
+            repartition.columns = ['Objet', 'Degré', 'Nombre de missions']
+
+            fig = px.bar(
+                repartition,
+                x='Objet',
+                y='Nombre de missions',
+                color='Degré',
+                barmode='stack',
+                text='Nombre de missions',
+                color_discrete_sequence=px.colors.qualitative.T10
+            )
+            fig.update_traces(textposition='outside')
+            fig.update_layout(
+                width=400,              # Largeur du graphique
+                height=250,
+                xaxis_title="",
+                yaxis_title="Nombre de missions",
+                legend=dict(orientation="v", yanchor="top", y=1, xanchor="left", x=1, title=None),
+                xaxis=dict(tickangle=25),
+                margin=dict(l=20, r=20, t=20, b=20)
+            )
+            st.plotly_chart(fig)
+
+        def repartition_par_degre_etablissement(df, etablissement):
+            """
+            Affiche un pie chart de la répartition des missions par degré pour un établissement donné.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+                etablissement (str): Le nom de l'établissement.
+
+            Returns:
+                None: Affiche directement le graphique avec Plotly.
+            """
+            df_etab = df[df['Lieu'] == etablissement].copy()  # Création d'une copie explicite
+            df_etab['Degré'] = df_etab['Mission'].apply(lambda x: "Degré 1" if "cp1" in x.lower() else "Degré 2")
+
+            repartition = df_etab['Degré'].value_counts().reset_index()
+            repartition.columns = ['Degré', 'Nombre de missions']
+
+            fig = px.pie(
+                repartition,
+                names='Degré',
+                values='Nombre de missions',
+                hole=0.4,
+                color_discrete_sequence=px.colors.qualitative.T10
+            )
+
+            fig.update_layout(
+                legend=dict(orientation="h", yanchor="top", y=0, xanchor="center", x=0.5),
+                width=220,              # Largeur du graphique
+                height=220,
+                margin=dict(l=20, r=20, t=0, b=0)
+            )
+            st.plotly_chart(fig)
+
+        @st.cache_data
+        def repartition_degre2_par_discipline(df, etablissement):
+            """
+            Affiche un pie chart de la répartition des missions de degré 2 par discipline pour un établissement donné.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+                etablissement (str): Le nom de l'établissement.
+
+            Returns:
+                None: Affiche directement le graphique avec Plotly.
+            """
+            df_etab = df[df['Lieu'] == etablissement].copy()  # Création d'une copie explicite
+            df_etab_degre2 = df_etab[df_etab['Mission']=="cp2d"].copy()  # Création d'une copie explicite\
+
+            repartition = df_etab_degre2['Discipline'].value_counts().reset_index()
+            repartition.columns = ['Discipline', 'Nombre de missions']
+
+            fig = px.pie(
+                repartition,
+                names='Discipline',
+                values='Nombre de missions',
+                hole=0.4,
+                color_discrete_sequence=px.colors.qualitative.T10
+
+            )
+            fig.update_traces(textposition='inside', textinfo='percent+label')
+            fig.update_layout(
+                width=220,              # Largeur du graphique
+                height=220,
+                legend=dict(orientation="h", yanchor="top", y=0, xanchor="center", x=0.5),
+                margin=dict(l=30, r=30, t=0, b=0)
+            )
+
+
+            st.plotly_chart(fig)
+
+
+        with st.container(border=True):
+            # Extraire les lieux uniques depuis la colonne 'Lieu' du DataFrame
+            etablissements = sorted(df_avis_de_mission['Lieu'].unique().tolist())
+
+            # Afficher le sélecteur pour choisir un établissement
+            selected_etablissement = st.selectbox(
+                "Sélectionnez un établissement :",  # Label du sélecteur
+                options=etablissements  # Options extraites du DataFrame
+            )
+            repartition_par_degre_etablissement(df_avis_de_mission,selected_etablissement)
+
+            repartition_degre2_par_discipline(df_avis_de_mission,selected_etablissement)
+
+            repartition_par_objet_et_degre(df_avis_de_mission,selected_etablissement)
 
     with col2:
-        tendance = data_cleaned.groupby(pd.Grouper(key='Date')).agg({
-            'Durée (en heure)': 'sum',
-            'Nombre d\'enseignants impactés': 'sum'
-        }).reset_index()
+        st.subheader("Vue générale")
 
-        # Trier par date
-        tendance = tendance.sort_values(by='Date')
+        # Nombre total de missions réalisées
 
-        # Calcul de la moyenne mobile sur la colonne 'Durée (en heure)' sur une fenêtre de 7 jours
-        tendance['Moyenne_mobile'] = tendance['Durée (en heure)'].rolling(window=6).mean()
+        def afficher_total_missions(df):
+            """
+            Affiche le nombre total de missions réalisées dans un conteneur Streamlit.
 
-        # Visualisation
-        fig_chart_2 = px.bar(
-            tendance,
-            x='Date',
-            y='Durée (en heure)',
-            title="Nombre d'heures d'intervention par jour",
-            color_discrete_sequence=color_grah_theme
-        )
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
 
-        # Suppression des titres des axes
-        fig_chart_2.update_xaxes(title=None, tickformat='%d/%m/%Y')
-        fig_chart_2.update_yaxes(title="Durée (en heure)")
+            Returns:
+                None: Affiche directement la métrique dans Streamlit.
+            """
+            total_missions = df.shape[0]
+            return st.metric(label="Nombre total de missions", value=total_missions)
 
-        # Ajout de la ligne de moyenne mobile
-        fig_chart_2.add_scatter(
-            x=tendance['Date'],
-            y=tendance['Moyenne_mobile'],
-            mode='lines',
-            name='Moyenne mobile (7 jours)',
-            showlegend=False,
-            fill='tozeroy',
-            line_shape='spline',
-            line=dict(color=color_grah_theme[1], width=2)
-        )
+        # Durée moyenne des missions
 
-        # Affichage du graphique dans Streamlit
-        st.plotly_chart(fig_chart_2)
+        def afficher_duree_moyenne_missions(df):
+            """
+            Affiche la durée moyenne des missions réalisées dans un conteneur Streamlit.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+
+            Returns:
+                None: Affiche directement la métrique dans Streamlit.
+            """
+            duree_moyenne = df['nb_jours'].mean()
+            return st.metric(label="Durée moyenne des missions (jours)", value=f"{duree_moyenne:.2f}")
+
+        # Visualisation des missions par CP
+
+        def visualiser_missions_par_cp_streamlit(df):
+            """
+            Affiche un bar chart du nombre total de missions réalisées par CP dans Streamlit.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+
+            Returns:
+                None: Affiche directement le graphique dans Streamlit.
+            """
+            # Calcul du nombre de missions par CP
+            df_missions_cp = df['Nom'].value_counts().reset_index()
+            df_missions_cp.columns = ['CP', 'Nombre de missions']
+            df_missions_cp = df_missions_cp.sort_values(by='Nombre de missions', ascending=False)
+
+
+            # Création du graphique avec Plotly
+            fig = px.bar(
+                df_missions_cp,
+                # x='Nombre de missions',
+                # y='CP',
+                x='CP',
+                y='Nombre de missions',
+                text='Nombre de missions',
+                color_discrete_sequence=px.colors.qualitative.T10
+            )
+            # Mise en forme du graphique
+            fig.update_traces(textposition='outside')
+            fig.update_layout(showlegend=False,
+                              width=100,
+                              height=300,
+                              legend=dict(orientation="h", yanchor="top", y=-2, xanchor="center", x=0.5),
+                              xaxis_title="",
+                              yaxis_title="Nombre de mission",
+                              yaxis=dict(range=[0, df_missions_cp['Nombre de missions'].max() + 5])  # Ajuste l'échelle
+)
+
+            # Affichage dans Streamlit
+
+            return st.plotly_chart(fig, use_container_width=True)
+
+
+        # Visualisation de la répartition par degré
+
+        def visualiser_repartition_par_degre_streamlit(df):
+            """
+            Affiche un pie chart de la répartition des missions par degré (1/2) dans Streamlit.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+
+            Returns:
+                None: Affiche directement le graphique dans Streamlit.
+            """
+            # Calcul de la répartition par degré
+            repartition_degre = df['Mission'].value_counts().reset_index()
+            repartition_degre.columns = ['Degré', 'Nombre de missions']
+
+            # Mapping des valeurs pour afficher Degré 1 / Degré 2
+            repartition_degre['Degré'] = repartition_degre['Degré'].map({'cp1d': 'Degré 1', 'cp2d': 'Degré 2'})
+
+            # Création du graphique avec Plotly
+            fig = px.pie(
+                repartition_degre,
+                names='Degré',
+                values='Nombre de missions',
+                hole=0.4,
+                color_discrete_sequence=px.colors.qualitative.T10
+            )
+
+            # Mise en forme du graphique
+            fig.update_layout(
+                width=200,              # Largeur du graphique
+                height=200,
+                legend=dict(orientation="h",
+                            yanchor="bottom",
+                            y=-0.2,
+                            xanchor="center",
+                            x=0.5),
+                margin=dict(l=20, r=20, t=20, b=20)
+            )
+
+            # Affichage dans Streamlit
+
+            return st.plotly_chart(fig, use_container_width=True)
+
+
+        def nb_missions_par_etablissement(df):
+            """
+            Affiche un bar chart du nombre total de missions réalisées par établissement.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions.
+
+            Returns:
+                None: Affiche directement le graphique avec Plotly.
+            """
+            # Calcul du nombre de missions par établissement
+            missions_par_etablissement = df['Lieu'].value_counts().reset_index()
+            missions_par_etablissement.columns = ['Établissement', 'Nombre de missions']
+
+            # Trier les établissements par nombre de missions (ordre décroissant)
+            missions_par_etablissement = missions_par_etablissement.sort_values(by='Nombre de missions', ascending=False)
+
+            # Création du graphique avec Plotly
+            fig = px.bar(
+                missions_par_etablissement,
+                x='Établissement',
+                y='Nombre de missions',
+                text='Nombre de missions',
+                color_discrete_sequence=[px.colors.qualitative.G10[1]] # Palette de couleurs
+            )
+
+            # Mise en forme du graphique
+            fig.update_traces(textposition='outside', texttemplate='%{text}')
+            fig.update_layout(
+                xaxis=dict(title=""),
+                width=200,              # Largeur du graphique
+                height=250,
+                yaxis=dict(
+                    title="Nombre de missions",  # Titre de l'axe
+                    range=[0, missions_par_etablissement['Nombre de missions'].max() + 10]  # Plage de l'axe y
+                ),
+            )
+
+            # Affichage du graphique
+            st.plotly_chart(fig, use_container_width=True)
+
+
+        def nb_missions_par_etablissement_par_eleve(df):
+            """
+            Affiche un bar chart du ratio missions/élèves pour chaque établissement.
+
+            Args:
+                df (pd.DataFrame): Le DataFrame contenant les données des missions,
+                                incluant une colonne 'Nombre d'élèves'.
+
+            Returns:
+                None: Affiche directement le graphique avec Plotly.
+            """
+            # Calcul du nombre total de missions par établissement
+            missions_par_etablissement_par_eleve = df['Lieu'].value_counts().reset_index()
+            missions_par_etablissement_par_eleve.columns = ['Établissement', 'Nombre de missions']
+
+            # Ajout du nombre d'élèves à partir des données préexistantes
+            nombre_eleves = {
+                'agadir': 1400, 'lfiad': 884, 'lfilm': 4319, 'tanger': 882,
+                'dakhla': 263, 'lfijc': 601, 'essaouira': 60, 'laayoune': 260,
+                'gs majorelle': 603, 'lfiam': 2014, 'oujda': 336
+            }
+            missions_par_etablissement_par_eleve['Nombre d\'élèves'] = missions_par_etablissement_par_eleve['Établissement'].map(nombre_eleves)
+
+            # Calcul du ratio missions/élèves
+            missions_par_etablissement_par_eleve['Ratio missions/élèves'] = (
+                missions_par_etablissement_par_eleve['Nombre de missions'] / missions_par_etablissement_par_eleve['Nombre d\'élèves']
+            )
+            # Trier par ordre décroissant du ratio missions/élèves
+            missions_par_etablissement_par_eleve = missions_par_etablissement_par_eleve.sort_values(by='Ratio missions/élèves', ascending=False)
+
+
+            # Création du graphique avec Plotly
+            fig = px.bar(
+                missions_par_etablissement_par_eleve,
+                x='Établissement',
+                y='Ratio missions/élèves',
+                text='Ratio missions/élèves',
+                color_discrete_sequence=px.colors.qualitative.G10  # Palette de couleurs
+            )
+
+            # Mise en forme du graphique
+            fig.update_traces(textposition='outside', texttemplate='%{text:.2f}')
+            fig.update_layout(
+                xaxis=dict(title=""),
+                width=200,              # Largeur du graphique
+                height=250,
+                yaxis=dict(
+                    title="Nombre de missions par élève",  # Titre de l'axe
+                    range=[0,missions_par_etablissement_par_eleve['Ratio missions/élèves'].max() + 0.01]  # Plage de l'axe y
+                ),
+            )
+
+            # Affichage du graphique
+            st.plotly_chart(fig, use_container_width=True)
+
+
+        with st.container(border=True):
+            col1, col2 = st.columns(2)
+            with col1:
+                afficher_total_missions(df_avis_de_mission)
+                afficher_duree_moyenne_missions(df_avis_de_mission)
+            with col2:
+                visualiser_repartition_par_degre_streamlit(df_avis_de_mission)
+
+            visualiser_missions_par_cp_streamlit(df_avis_de_mission)
+
+            # nb_missions_par_etablissement(df_avis_de_mission)
+
+            # nb_missions_par_etablissement_par_eleve(df_avis_de_mission)
+
+            # Utilisation de st.toggle
+            if st.toggle("Afficher le nombre total de missions par établissement et par élève", value=False):
+                nb_missions_par_etablissement_par_eleve(df_avis_de_mission)
+            else:
+                nb_missions_par_etablissement(df_avis_de_mission)
+
+    with col3:
+        st.subheader("Vue par CP")
+        with st.container(border=True):
+            # Extraire les lieux uniques depuis la colonne 'Lieu' du DataFrame
+            noms_cp = sorted(df_avis_de_mission['Nom'].unique().tolist())
+            # Afficher le sélecteur pour choisir un établissement
+            selected_name= st.selectbox(
+                "Sélectionnez un nom :",  # Label du sélecteur
+                options=noms_cp  # Options extraites du DataFrame
+            )
+
+            def total_missions_cp(df, nom_cp):
+                """
+                Calcule le nombre total de missions réalisées pour un CP donné.
+
+                Args:
+                    df (pd.DataFrame): Le DataFrame contenant les données des missions.
+                    nom_cp (str): Le nom du CP.
+
+                Returns:
+                    int: Nombre total de missions réalisées pour le CP.
+                """
+                return df[df['Nom'] == nom_cp].shape[0]
+
+            def repartition_par_etablissement_cp(df, nom_cp):
+                """
+                Affiche un bar chart de la répartition des missions par établissement pour un CP donné.
+
+                Args:
+                    df (pd.DataFrame): Le DataFrame contenant les données des missions.
+                    nom_cp (str): Le nom du CP.
+
+                Returns:
+                    None: Affiche directement le graphique avec Plotly.
+                """
+                df_cp = df[df['Nom'] == nom_cp]
+                missions_par_etablissement = df_cp['Lieu'].value_counts().reset_index()
+                missions_par_etablissement.columns = ['Établissement', 'Nombre de missions']
+
+                fig = px.bar(
+                    missions_par_etablissement,
+                    x='Nombre de missions',
+                    y='Établissement',
+                    text='Nombre de missions',
+                    orientation='h',
+                    color_discrete_sequence=px.colors.qualitative.T10
+                )
+                fig.update_traces(textposition='outside')
+                fig.update_layout(
+                    height=300,
+                    xaxis_title="Nombre de missions",
+                    yaxis_title="")
+
+                st.plotly_chart(fig)
+
+            def repartition_par_objet_cp(df, nom_cp):
+                """
+                Affiche un pie chart de la répartition des missions par objet pour un CP donné.
+
+                Args:
+                    df (pd.DataFrame): Le DataFrame contenant les données des missions.
+                    nom_cp (str): Le nom du CP.
+
+                Returns:
+                    None: Affiche directement le graphique avec Plotly.
+                """
+                df_cp = df[df['Nom'] == nom_cp]
+                missions_par_objet = df_cp['Objet'].value_counts().reset_index()
+                missions_par_objet.columns = ['Objet', 'Nombre de missions']
+
+                fig = px.pie(
+                    missions_par_objet,
+                    names='Objet',
+                    values='Nombre de missions',
+                    hole=0.4,
+                    color_discrete_sequence=px.colors.qualitative.G10
+                )
+                fig.update_layout(
+                    width=300,
+                    height=300,
+                    legend=dict(
+                        orientation="h",  # Orientation horizontale
+                        yanchor="top",
+                        y=-0.1,  # Position sous le graphique
+                        xanchor="center",
+                        x=0.5  # Centrer la légende
+                    )
+                )
+                st.plotly_chart(fig)
+
+
+
+            st.metric(label="Nombre de mission", value=total_missions_cp(df_avis_de_mission, selected_name))
+
+            repartition_par_etablissement_cp(df_avis_de_mission, selected_name)
+
+            repartition_par_objet_cp(df_avis_de_mission, selected_name)
