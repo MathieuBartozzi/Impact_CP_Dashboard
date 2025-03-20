@@ -434,6 +434,8 @@ with tab2 :
 
 
 with tab1:
+
+
     @st.cache_data
     def nettoyer_data_avis_de_mission(file_id, gid, verbose=False, colonnes_a_supprimer=None, colonnes_essentielles=None, nettoyer_texte=True):
         if colonnes_a_supprimer is None:
@@ -445,6 +447,7 @@ with tab1:
         try:
             url = f"https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv&gid={gid}"
             data_avis_de_mission = pd.read_csv(url)
+            print(data_avis_de_mission.columns)
         except Exception as e:
             print(f"Erreur lors du chargement des données : {e}")
             return None
@@ -473,8 +476,8 @@ with tab1:
             'Nom / Prénom': 'Nom',
             'Discipline': 'Discipline',
             'Lieu d\'intervention': 'Lieu',
-            'Date d\'intervention': 'Date',
-            'Nombre de jour': 'nb_jours',
+            "Date d'intervention": 'Date',
+            'Nombre de jours': 'nb_jours',
             'Année scolaire 2024/2025': 'AnneeScolaire',
             'Mission': 'Mission',
             'Objet de la mission': 'Objet',
