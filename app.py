@@ -85,7 +85,19 @@ with tab2 :
     with col2:
         with st.container(border=True):
             nb_total_enseignants=883
-            st.metric(label="Taux moyen d'exposition des enseignants aux CP", value=round(total_enseignants/nb_total_enseignants,2))
+            # st.metric(label="Taux moyen d'exposition des enseignants aux CP", value=round(total_enseignants/nb_total_enseignants,2))
+                # Calcul pondéré réel
+            data_cleaned_impact_cp["impact_duree"] = (
+                data_cleaned_impact_cp["Durée (en heure)"] * data_cleaned_impact_cp["Nombre d'enseignants impactés"]
+            )
+            total_heures_enseignants = data_cleaned_impact_cp["impact_duree"].sum()
+            taux_duree_par_enseignant = total_heures_enseignants / nb_total_enseignants
+            # Affichage dans un bloc de métrique
+            st.metric(
+                label="Durée moyenne d'accompagnement par enseignant (en h)",
+                value=round(taux_duree_par_enseignant, 2),
+                help="Somme pondérée des heures réparties sur l'ensemble des enseignants du réseau"
+            )
     with col3:
         with st.container(border=True):
             st.metric(label="Durée moyenne d'intervention hebdomadaire par CP (en h)", value=durée_moyenne)
@@ -204,41 +216,95 @@ with tab2 :
             with col2:
 
 
+                # @st.cache_data
+                # def repartition_par_type_global(df):
+                #     """
+                #     Affiche un graphique en barres empilées pour la répartition des types d'activités par public.
+
+                #     Args:
+                #         data_cleaned_impact_cp (pd.DataFrame): Le DataFrame contenant les données des activités, incluant les colonnes
+                #                                             'Type', 'Public', et "Nombre d'enseignants impactés".
+
+                #     Returns:
+                #         None: Affiche directement le graphique dans Streamlit.
+                #     """
+                #     # Création du graphique en barres empilées
+                #     fig_stacked_bar_degre = px.bar(
+                #         df,
+                #         x="Nombre d'enseignants impactés",
+                #         y='Type',
+                #         color='Public',
+                #         title=None,
+                #         color_discrete_map=color_mapping_public
+                #     )
+
+                #     # Mise en forme du graphique
+                #     fig_stacked_bar_degre.update_layout(
+                #         barmode='stack',
+                #         showlegend=False,
+                #         width=500,
+                #         height=200,
+                #         margin=dict(l=10, r=10, t=20, b=20)  # Marges réduites
+                #     )
+                #     fig_stacked_bar_degre.update_xaxes(title=None)  # Suppression du label de l'axe X
+                #     fig_stacked_bar_degre.update_yaxes(title=None)  # Suppression du label de l'axe Y
+
+                #     # Affichage du graphique dans Streamlit
+                #     st.plotly_chart(fig_stacked_bar_degre)
+
                 @st.cache_data
                 def repartition_par_type_global(df):
                     """
-                    Affiche un graphique en barres empilées pour la répartition des types d'activités par public.
+                    Affiche un graphique en barres empilées avec le total des actions affiché à droite de chaque barre.
 
                     Args:
-                        data_cleaned_impact_cp (pd.DataFrame): Le DataFrame contenant les données des activités, incluant les colonnes
-                                                            'Type', 'Public', et "Nombre d'enseignants impactés".
+                        df (pd.DataFrame): DataFrame avec colonnes 'Type' et 'Public'.
 
                     Returns:
-                        None: Affiche directement le graphique dans Streamlit.
+                        None
                     """
+                    # Groupement des données pour compter le nombre d'actions
+                    grouped = df.groupby(['Type', 'Public']).size().reset_index(name='Nombre d\'actions')
+
+                    # Total par Type (pour affichage du total)
+                    totals = grouped.groupby('Type')['Nombre d\'actions'].sum().reset_index()
+
                     # Création du graphique en barres empilées
-                    fig_stacked_bar_degre = px.bar(
-                        df,
-                        x="Nombre d'enseignants impactés",
+                    fig = px.bar(
+                        grouped,
+                        x="Nombre d'actions",
                         y='Type',
                         color='Public',
-                        title=None,
+                        orientation='h',
                         color_discrete_map=color_mapping_public
                     )
 
-                    # Mise en forme du graphique
-                    fig_stacked_bar_degre.update_layout(
+                    fig.update_layout(
                         barmode='stack',
                         showlegend=False,
                         width=500,
                         height=200,
-                        margin=dict(l=10, r=10, t=20, b=20)  # Marges réduites
+                        margin=dict(l=10, r=10, t=20, b=20)
                     )
-                    fig_stacked_bar_degre.update_xaxes(title=None)  # Suppression du label de l'axe X
-                    fig_stacked_bar_degre.update_yaxes(title=None)  # Suppression du label de l'axe Y
 
-                    # Affichage du graphique dans Streamlit
-                    st.plotly_chart(fig_stacked_bar_degre)
+                    fig.update_xaxes(title=None)
+                    fig.update_yaxes(title=None)
+
+                    # Ajouter les annotations de total
+                    for i, row in totals.iterrows():
+                        fig.add_annotation(
+                            x=row["Nombre d'actions"] + 2,  # un petit décalage pour lisibilité
+                            y=row["Type"],
+                            text=str(row["Nombre d'actions"]),
+                            showarrow=False,
+                            font=dict(color="black"),
+                            xanchor="left",
+                            yanchor="middle"
+                        )
+
+                    st.plotly_chart(fig)
+
+
 
                 repartition_par_type_global(data_cleaned_impact_cp)
 
@@ -430,6 +496,7 @@ with tab2 :
                 st.plotly_chart(fig)
 
             charge_travail(data_cleaned_impact_cp)
+
 
 
 
