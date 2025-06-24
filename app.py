@@ -78,15 +78,19 @@ with tab2 :
     # Debut de la page
 
     #ligne 1 : indicateurs
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
+
     with col1:
         with st.container(border=True):
-            st.metric(label="Nombre total d'interventions des CP", value=total_interventions)
+            st.metric(label="Total interventions CP", value=total_interventions,
+            help="Nombre total d’interventions menées par les conseillers pédagogiques sur la période observée")
     with col2:
         with st.container(border=True):
+            st.metric(label="Interventions / CP / semaine", value=round(total_interventions/nb_cp/num_weeks,2),
+            help="Nombre moyen d’interventions réalisées chaque semaine par un CP")
+    with col3:
+        with st.container(border=True):
             nb_total_enseignants=883
-            # st.metric(label="Taux moyen d'exposition des enseignants aux CP", value=round(total_enseignants/nb_total_enseignants,2))
-                # Calcul pondéré réel
             data_cleaned_impact_cp["impact_duree"] = (
                 data_cleaned_impact_cp["Durée (en heure)"] * data_cleaned_impact_cp["Nombre d'enseignants impactés"]
             )
@@ -94,16 +98,15 @@ with tab2 :
             taux_duree_par_enseignant = total_heures_enseignants / nb_total_enseignants
             # Affichage dans un bloc de métrique
             st.metric(
-                label="Durée moyenne d'accompagnement par enseignant (en h)",
+                label="Heures moy. / enseignant",
                 value=round(taux_duree_par_enseignant, 2),
-                help="Somme pondérée des heures réparties sur l'ensemble des enseignants du réseau"
+                help="Heures d'accompagnement par enseignant, toutes actions confondues"
+
             )
-    with col3:
+    with col4:
         with st.container(border=True):
-            st.metric(label="Durée moyenne d'intervention hebdomadaire par CP (en h)", value=durée_moyenne)
-    # with col4:
-    #     with st.container(border=True):
-    #         st.metric(label="Efficacité moyenne perçue (sur 5)", value=f"{efficacite_moyenne_val:.2f}")
+            st.metric(label="Heures / CP / semaine", value=durée_moyenne,help="Temps moyen d’intervention par conseiller pédagogique chaque semaine"
+        )
 
 
     #ligne 1 : pie chart formart + pie char format + repartation par public vs types.
@@ -215,43 +218,6 @@ with tab2 :
 
             with col2:
 
-
-                # @st.cache_data
-                # def repartition_par_type_global(df):
-                #     """
-                #     Affiche un graphique en barres empilées pour la répartition des types d'activités par public.
-
-                #     Args:
-                #         data_cleaned_impact_cp (pd.DataFrame): Le DataFrame contenant les données des activités, incluant les colonnes
-                #                                             'Type', 'Public', et "Nombre d'enseignants impactés".
-
-                #     Returns:
-                #         None: Affiche directement le graphique dans Streamlit.
-                #     """
-                #     # Création du graphique en barres empilées
-                #     fig_stacked_bar_degre = px.bar(
-                #         df,
-                #         x="Nombre d'enseignants impactés",
-                #         y='Type',
-                #         color='Public',
-                #         title=None,
-                #         color_discrete_map=color_mapping_public
-                #     )
-
-                #     # Mise en forme du graphique
-                #     fig_stacked_bar_degre.update_layout(
-                #         barmode='stack',
-                #         showlegend=False,
-                #         width=500,
-                #         height=200,
-                #         margin=dict(l=10, r=10, t=20, b=20)  # Marges réduites
-                #     )
-                #     fig_stacked_bar_degre.update_xaxes(title=None)  # Suppression du label de l'axe X
-                #     fig_stacked_bar_degre.update_yaxes(title=None)  # Suppression du label de l'axe Y
-
-                #     # Affichage du graphique dans Streamlit
-                #     st.plotly_chart(fig_stacked_bar_degre)
-
                 @st.cache_data
                 def repartition_par_type_global(df):
                     """
@@ -268,6 +234,10 @@ with tab2 :
 
                     # Total par Type (pour affichage du total)
                     totals = grouped.groupby('Type')['Nombre d\'actions'].sum().reset_index()
+                    # Tri décroissant des types
+                    sorted_types = totals.sort_values(by='Nombre d\'actions', ascending=False)['Type']
+                    # Remettre l'ordre des catégories dans le DataFrame
+                    grouped['Type'] = pd.Categorical(grouped['Type'], categories=sorted_types, ordered=True)
 
                     # Création du graphique en barres empilées
                     fig = px.bar(
